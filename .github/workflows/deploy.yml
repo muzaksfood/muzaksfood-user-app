@@ -1,0 +1,68 @@
+name: Deploy Flutter Web Incrementally with Full Cache-Busting
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout repo
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Install Flutter
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.13.0' # adjust if needed
+
+      # 3. Get dependencies
+      - name: Flutter pub get
+        run: flutter pub get
+
+      # 4. Build Flutter web
+      - name: Build Flutter web
+        run: flutter build web --release
+
+      # 5. Install necessary tools
+      - name: Install utilities
+        run: sudo apt-get update && sudo apt-get install -y lftp rename
+
+      # 6. Cache-bust all main assets
+      - name: Cache-bust main JS, CSS, and assets
+        run: |
+          TIMESTAMP=$(date +%s)
+          cd build/web
+          # Rename main JS & CSS files
+          for file in main.dart.js flutter.js styles.css; do
+            if [ -f "$file" ]; then
+              mv "$file" "${file%.js}.${TIMESTAMP}.js"
+              sed -i "s|$file|${file%.js}.${TIMESTAMP}.js|g" index.html
+            fi
+          done
+          # Rename all other assets referenced in index.html (optional)
+          for asset in $(grep -oP 'src="\K[^"]+' index.html); do
+            if [ -f "$asset" ]; then
+              HASH_FILE="${asset%.*}.${TIMESTAMP}.${asset##*.}"
+              mv "$asset" "$HASH_FILE"
+              sed -i "s|$asset|$HASH_FILE|g" index.html
+            fi
+          done
+
+      # 7. Deploy changed files to Namecheap
+      - name: Deploy to Namecheap
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_REMOTE_DIR: ${{ secrets.FTP_REMOTE_DIR }}
+        run: |
+          lftp -c "
+          open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER
+          mirror -R --delete --verbose build/web $FTP_REMOTE_DIR
+          bye
+          "
