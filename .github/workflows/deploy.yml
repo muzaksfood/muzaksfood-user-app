@@ -16,15 +16,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2. Download and setup Flutter
-      - name: Install Flutter
+      # 2. Download Flutter
+      - name: Download Flutter
         run: |
-          wget https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_${FLUTTER_VERSION}-stable.tar.xz
-          tar xf flutter_linux_${FLUTTER_VERSION}-stable.tar.xz
-          echo "${PWD}/flutter/bin" >> $GITHUB_PATH
-          flutter --version
+          wget https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.38.4-stable.tar.xz
+          tar xf flutter_linux_3.38.4-stable.tar.xz
 
-      # 3. Cache pub packages
+      # 3. Add Flutter to PATH
+      - name: Add Flutter to PATH
+        run: echo "${PWD}/flutter/bin" >> $GITHUB_PATH
+
+      # 4. Verify Flutter version
+      - name: Flutter version
+        run: flutter --version
+
+      # 5. Cache pub packages
       - name: Cache pub packages
         uses: actions/cache@v3
         with:
@@ -33,19 +39,19 @@ jobs:
             ${{ github.workspace }}/build
           key: ${{ runner.os }}-pubcache-${{ hashFiles('pubspec.lock') }}
 
-      # 4. Get packages
+      # 6. Get packages
       - name: Flutter pub get
         run: flutter pub get
 
-      # 5. Build Flutter web
+      # 7. Build Flutter web
       - name: Build Flutter web
         run: flutter build web --release
 
-      # 6. Install utilities
+      # 8. Install utilities
       - name: Install utilities
         run: sudo apt-get update && sudo apt-get install -y lftp rename
 
-      # 7. Full cache-busting (JS, CSS, assets)
+      # 9. Full cache-busting (JS, CSS, assets)
       - name: Cache-bust main JS, CSS, and assets
         run: |
           TIMESTAMP=$(date +%s)
@@ -69,7 +75,7 @@ jobs:
             fi
           done
 
-      # 8. Deploy via FTP (incremental)
+      # 10. Deploy via FTP (incremental)
       - name: Deploy to Namecheap
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
