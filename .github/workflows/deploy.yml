@@ -8,22 +8,23 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    env:
+      FLUTTER_VERSION: 3.38.4  # Flutter version compatible with Dart 3.8.1+
 
     steps:
-      # 1. Checkout repo
+      # 1. Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2. Download and Install Flutter 3.27.1 (with Dart 3.8.1)
-      - name: Install Flutter 3.27.1
+      # 2. Download and setup Flutter
+      - name: Install Flutter
         run: |
-          wget https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.27.1-stable.tar.xz
-          tar -xf flutter_linux_3.27.1-stable.tar.xz
-          export FLUTTER_HOME="$PWD/flutter"
-          export PATH="$FLUTTER_HOME/bin:$PATH"
+          wget https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_${FLUTTER_VERSION}-stable.tar.xz
+          tar xf flutter_linux_${FLUTTER_VERSION}-stable.tar.xz
+          echo "${PWD}/flutter/bin" >> $GITHUB_PATH
           flutter --version
 
-      # 3. Cache pub dependencies
+      # 3. Cache pub packages
       - name: Cache pub packages
         uses: actions/cache@v3
         with:
@@ -34,15 +35,11 @@ jobs:
 
       # 4. Get packages
       - name: Flutter pub get
-        run: |
-          export PATH="$PWD/flutter/bin:$PATH"
-          flutter pub get
+        run: flutter pub get
 
-      # 5. Build web
+      # 5. Build Flutter web
       - name: Build Flutter web
-        run: |
-          export PATH="$PWD/flutter/bin:$PATH"
-          flutter build web --release
+        run: flutter build web --release
 
       # 6. Install utilities
       - name: Install utilities
