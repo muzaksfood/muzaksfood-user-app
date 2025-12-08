@@ -14,48 +14,65 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2. Download Flutter 3.27.1 (Dart 3.8.1)
+      # 2. Download and Install Flutter 3.27.1 (with Dart 3.8.1)
       - name: Install Flutter 3.27.1
         run: |
           wget https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.27.1-stable.tar.xz
           tar -xf flutter_linux_3.27.1-stable.tar.xz
-          echo "$PWD/flutter/bin" >> $GITHUB_PATH
+          export FLUTTER_HOME="$PWD/flutter"
+          export PATH="$FLUTTER_HOME/bin:$PATH"
           flutter --version
 
-      # 3. Get dependencies
+      # 3. Cache pub dependencies
+      - name: Cache pub packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pub-cache
+            ${{ github.workspace }}/build
+          key: ${{ runner.os }}-pubcache-${{ hashFiles('pubspec.lock') }}
+
+      # 4. Get packages
       - name: Flutter pub get
-        run: flutter pub get
+        run: |
+          export PATH="$PWD/flutter/bin:$PATH"
+          flutter pub get
 
-      # 4. Build Flutter web
+      # 5. Build web
       - name: Build Flutter web
-        run: flutter build web --release
+        run: |
+          export PATH="$PWD/flutter/bin:$PATH"
+          flutter build web --release
 
-      # 5. Install utilities
+      # 6. Install utilities
       - name: Install utilities
         run: sudo apt-get update && sudo apt-get install -y lftp rename
 
-      # 6. Cache-bust main JS, CSS, and assets
+      # 7. Full cache-busting (JS, CSS, assets)
       - name: Cache-bust main JS, CSS, and assets
         run: |
           TIMESTAMP=$(date +%s)
           cd build/web
-          # Rename main JS & CSS files
+
+          # Cache-bust core files
           for file in main.dart.js flutter.js styles.css; do
             if [ -f "$file" ]; then
-              mv "$file" "${file%.*}.${TIMESTAMP}.${file##*.}"
-              sed -i "s|$file|${file%.*}.${TIMESTAMP}.${file##*.}|g" index.html
-            fi
-          done
-          # Rename other assets referenced in index.html
-          for asset in $(grep -oP 'src="\K[^"]+' index.html); do
-            if [ -f "$asset" ]; then
-              HASH_FILE="${asset%.*}.${TIMESTAMP}.${asset##*.}"
-              mv "$asset" "$HASH_FILE"
-              sed -i "s|$asset|$HASH_FILE|g" index.html
+              NEW_FILE="${file%.*}.${TIMESTAMP}.${file##*.}"
+              mv "$file" "$NEW_FILE"
+              sed -i "s|$file|$NEW_FILE|g" index.html
             fi
           done
 
-      # 7. Deploy to Namecheap
+          # Cache-bust every asset referenced in index.html
+          for asset in $(grep -oP 'src="\K[^"]+' index.html); do
+            if [ -f "$asset" ]; then
+              NEW_ASSET="${asset%.*}.${TIMESTAMP}.${asset##*.}"
+              mv "$asset" "$NEW_ASSET"
+              sed -i "s|$asset|$NEW_ASSET|g" index.html
+            fi
+          done
+
+      # 8. Deploy via FTP (incremental)
       - name: Deploy to Namecheap
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
