@@ -3,7 +3,7 @@ import 'package:flutter_grocery/utill/app_constants.dart';
 
 ThemeData dark = ThemeData(
   fontFamily: AppConstants.fontFamily,
-  primaryColor: const Color(0xFF82CAB6),
+  primaryColor: const Color(0xFFFF6606),
   secondaryHeaderColor: const Color(0xFF7f968e),
   brightness: Brightness.dark,
   scaffoldBackgroundColor: const Color(0xFF2C2C2C),
@@ -22,8 +22,8 @@ ThemeData dark = ThemeData(
   dialogTheme: const DialogThemeData(surfaceTintColor: Colors.white10),
   colorScheme: ColorScheme(
     brightness: Brightness.dark,
-    primary: const Color(0xFF82CAB6),
-    onPrimary: const Color(0xFF82CAB6),
+    primary: const Color(0xFFFF6606),
+    onPrimary: const Color(0xFFFF6606),
     secondary: const Color(0xFF7f968e),
     onSecondary: const Color(0xFFefe6fc),
     error: Colors.redAccent,
