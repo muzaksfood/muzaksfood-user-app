@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "756706863472",
+    "project_id": "themuzaksfood",
+    "storage_bucket": "themuzaksfood.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:756706863472:android:d29f30a085b40c2e4087b5",
+        "android_client_info": {
+          "package_name": "com.muzaksfood.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDj4QOudP11qn8wXanRZXy0i_fa4fVChtw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
