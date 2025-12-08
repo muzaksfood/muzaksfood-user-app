@@ -9,8 +9,8 @@ class AppConstants {
   static const AppMode appMode = AppMode.demo;
   static const LocalCachesTypeEnum cachesType = LocalCachesTypeEnum.all;
   static const String fontFamily = 'Poppins';
-  static const String baseUrl = 'https://admin.muzaksfood.com';
-  static const String webHostUrl = 'https://muzaksfood.web.app';
+  static const String baseUrl = 'https://app.muzaksfood.com';
+  static const String webHostUrl = 'https://muzaksfood.com';
   static const String googleServerClientId = 'YOUR_AUTH_CLIENT_ID';
   static const String configUri = '/api/v1/config';
   static const String bannerUri = '/api/v1/banners';
