@@ -13,7 +13,7 @@ import 'package:flutter_grocery/features/home/providers/banner_provider.dart';
 import 'package:flutter_grocery/features/home/providers/flash_deal_provider.dart';
 import 'package:flutter_grocery/features/home/widgets/all_product_list_widget.dart';
 import 'package:flutter_grocery/features/home/widgets/banners_widget.dart';
-import 'package:flutter_grocery/features/home/widgets/category_web_widget.dart';
+import 'package:flutter_grocery/common/widgets/floating_cart_button.dart';
 import 'package:flutter_grocery/features/home/widgets/category_page_widget.dart';
 import 'package:flutter_grocery/features/home/widgets/flash_deal_home_card_widget.dart';
 import 'package:flutter_grocery/features/home/widgets/home_item_widget.dart';
@@ -104,6 +104,8 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Theme.of(context).primaryColor,
       child: Scaffold(
         appBar: ResponsiveHelper.isDesktop(context) ? const PreferredSize(preferredSize: Size.fromHeight(120), child: WebAppBarWidget())  : null,
+        floatingActionButton: const FloatingCartButton(),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         body: CustomScrollView(controller: scrollController, slivers: [
           SliverToBoxAdapter(child: Center(child: SizedBox(
             width: Dimensions.webScreenWidth,
@@ -120,15 +122,6 @@ class _HomeScreenState extends State<HomeScreen> {
               const CategoryPillsWidget(),
 
               const SizedBox(height: Dimensions.paddingSizeLarge),
-
-              /// Category
-              Padding(
-                padding: EdgeInsets.only(
-                  bottom: ResponsiveHelper.isDesktop(context) ? Dimensions.paddingSizeLarge : Dimensions.paddingSizeDefault,
-                ),
-                child: const CategoryWidget(),
-              ),
-
 
               /// Flash Deal
               Selector<SplashProvider, ConfigModel?>(

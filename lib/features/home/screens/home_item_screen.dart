@@ -151,11 +151,11 @@ class _HomeItemScreenState extends State<HomeItemScreen> {
                         scrollController: scrollController,
                         itemView: GridView.builder(
                           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisSpacing: ResponsiveHelper.isDesktop(context) ? 12 : 8,
-                            mainAxisSpacing: ResponsiveHelper.isDesktop(context) ? 12 : 8,
+                            crossAxisSpacing: ResponsiveHelper.isDesktop(context) ? 16 : 10,
+                            mainAxisSpacing: ResponsiveHelper.isDesktop(context) ? 20 : 16,
                             childAspectRatio: ResponsiveHelper.isDesktop(context)
-                                ? 0.58
-                                : 0.72,
+                                ? 0.56
+                                : 0.68,
                             crossAxisCount: ResponsiveHelper.isDesktop(context)
                                 ? (imageWidth / 170).floor().clamp(6, 8)
                                 : ResponsiveHelper.isTab(context)

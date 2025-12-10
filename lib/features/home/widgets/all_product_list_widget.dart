@@ -108,13 +108,13 @@ class _AllProductListWidgetState extends State<AllProductListWidget> {
                 isFooter: false, title: getTranslated('not_product_found', context),
               ) : GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisSpacing: isDesktop ? 12 : 8,
-                  mainAxisSpacing: isDesktop ? 12 : 8,
+                  crossAxisSpacing: isDesktop ? 16 : 10,
+                  mainAxisSpacing: isDesktop ? 20 : 16,
                   childAspectRatio: isDesktop
-                      ? 0.58
+                      ? 0.56
                       : ResponsiveHelper.isTab(context)
                           ? (screenWeight > 860 ? 0.85 : 0.65)
-                          : 0.7,
+                          : 0.68,
                   crossAxisCount: isDesktop ? desktopCrossAxisCount : ResponsiveHelper.isTab(context) ? 3 : 3,
                 ),
                 itemCount: productProvider.allProductModel?.products != null ? productProvider.allProductModel?.products?.length : 10,
