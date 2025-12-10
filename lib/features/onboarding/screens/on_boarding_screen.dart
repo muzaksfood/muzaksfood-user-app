@@ -105,7 +105,7 @@ class OnBoardingScreen extends StatelessWidget {
     ));
   }
 
-  List<Widget> _pageIndicators(var onBoardingList, BuildContext context) {
+  List<Widget> _pageIndicators(List<dynamic> onBoardingList, BuildContext context) {
     List<Container> indicators = [];
 
     for (int i = 0; i < onBoardingList.length; i++) {

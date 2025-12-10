@@ -33,6 +33,8 @@ class _AllProductListWidgetState extends State<AllProductListWidget> {
   @override
   Widget build(BuildContext context) {
     final double screenWeight = MediaQuery.sizeOf(context).width;
+    final bool isDesktop = ResponsiveHelper.isDesktop(context);
+    final int desktopCrossAxisCount = isDesktop ? (screenWeight / 170).floor().clamp(6, 8) : 3;
 
     return Consumer<ProductProvider>(
       builder: (context, productProvider, _) {
@@ -106,15 +108,19 @@ class _AllProductListWidgetState extends State<AllProductListWidget> {
                 isFooter: false, title: getTranslated('not_product_found', context),
               ) : GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisSpacing: ResponsiveHelper.isDesktop(context) ? 13 : 10,
-                  mainAxisSpacing: ResponsiveHelper.isDesktop(context) ? 13 : 10,
-                  childAspectRatio: ResponsiveHelper.isDesktop(context) ? 0.7 : ResponsiveHelper.isTab(context) ? ( screenWeight > 860 ? 0.9 : 0.60) : 0.6,
-                  crossAxisCount: ResponsiveHelper.isDesktop(context) ? 5 : ResponsiveHelper.isTab(context) ? 3  : 2,
+                  crossAxisSpacing: isDesktop ? 12 : 8,
+                  mainAxisSpacing: isDesktop ? 12 : 8,
+                  childAspectRatio: isDesktop
+                      ? 0.78
+                      : ResponsiveHelper.isTab(context)
+                          ? (screenWeight > 860 ? 0.85 : 0.65)
+                          : 0.7,
+                  crossAxisCount: isDesktop ? desktopCrossAxisCount : ResponsiveHelper.isTab(context) ? 3 : 3,
                 ),
                 itemCount: productProvider.allProductModel?.products != null ? productProvider.allProductModel?.products?.length : 10,
                 padding: EdgeInsets.symmetric(
-                  horizontal: ResponsiveHelper.isDesktop(context) ? 0 : Dimensions.paddingSizeSmall,
-                  vertical: ResponsiveHelper.isDesktop(context) ? 0 : Dimensions.paddingSizeLarge,
+                  horizontal: isDesktop ? 0 : Dimensions.paddingSizeSmall,
+                  vertical: isDesktop ? 0 : Dimensions.paddingSizeLarge,
                 ),
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,

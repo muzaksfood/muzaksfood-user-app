@@ -103,12 +103,13 @@ class _CustomTextFieldWidgetState extends State<CustomTextFieldWidget> {
     super.initState();
   }
 
-  Future showAndCloseTooltip(var key) async {
+  Future<void> showAndCloseTooltip(GlobalKey? key) async {
     await Future.delayed(const Duration(milliseconds: 10));
-    final dynamic tooltip = key.currentState;
-    tooltip?.ensureTooltipVisible();
+    final dynamic tooltip = key?.currentState;
+    if (tooltip == null) return;
+    tooltip.ensureTooltipVisible();
     await Future.delayed(const Duration(milliseconds: 10));
-    tooltip?.deactivate();
+    tooltip.deactivate();
   }
 
   @override

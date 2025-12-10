@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_grocery/helper/responsive_helper.dart';
-import 'package:flutter_grocery/localization/language_constraints.dart';
 import 'package:flutter_grocery/utill/dimensions.dart';
-import 'package:flutter_grocery/utill/styles.dart';
 import 'package:flutter_grocery/common/widgets/custom_loader_widget.dart';
 
 class PaginatedListWidget extends StatefulWidget {
@@ -40,7 +37,7 @@ class _PaginatedListWidgetState extends State<PaginatedListWidget> {
     widget.scrollController.addListener(() {
       if (widget.scrollController.position.pixels == widget.scrollController.position.maxScrollExtent
           && widget.totalSize != null && !_isLoading && widget.enabledPagination) {
-        if(mounted && !ResponsiveHelper.isDesktop(context)) {
+        if(mounted) {
           _paginate();
         }
       }
@@ -84,31 +81,10 @@ class _PaginatedListWidgetState extends State<PaginatedListWidget> {
 
       widget.reverse ? const SizedBox() : widget.itemView,
 
-      (ResponsiveHelper.isDesktop(context) && (widget.totalSize == null || _offset! >= (widget.totalSize! / 10).ceil() || _offsetList.contains(_offset!+1))) ? SizedBox(
-        height: ResponsiveHelper.isDesktop(context) ? Dimensions.paddingSizeLarge : 0,
-      ) : Center(child: Container(
-        padding: (_isLoading || ResponsiveHelper.isDesktop(context)) ? EdgeInsets.all(Dimensions.paddingSizeDefault) : EdgeInsets.zero,
+      Center(child: Container(
+        padding: _isLoading ? EdgeInsets.all(Dimensions.paddingSizeDefault) : EdgeInsets.zero,
         margin: EdgeInsets.only(bottom: widget.loaderBottomMargin ?? 0),
-        child: _isLoading ? CustomLoaderWidget(color: Theme.of(context).primaryColor) : (ResponsiveHelper.isDesktop(context) && widget.totalSize != null) ? InkWell(
-          onTap: _paginate,
-          child: Container(
-            width: 150,
-            padding: const EdgeInsets.symmetric(
-              vertical: Dimensions.paddingSizeSmall,
-              horizontal: Dimensions.paddingSizeLarge,
-            ),
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(Dimensions.radiusSizeTen),
-              border: Border.all(color: Theme.of(context).primaryColor),
-            ),
-            child: Text(getTranslated('see_more', context), style: poppinsMedium.copyWith(
-              fontSize: Dimensions.fontSizeLarge,
-              color: Theme.of(context).primaryColor,
-            )),
-
-          ),
-        ) : const SizedBox(),
+        child: _isLoading ? CustomLoaderWidget(color: Theme.of(context).primaryColor) : const SizedBox(),
       )),
 
       widget.reverse ? widget.itemView : const SizedBox(),

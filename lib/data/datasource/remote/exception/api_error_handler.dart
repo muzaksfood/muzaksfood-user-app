@@ -9,7 +9,7 @@ import 'package:flutter_grocery/utill/app_constants.dart';
 
 
 class ApiErrorHandler {
-  static dynamic getMessage(error) {
+  static dynamic getMessage(dynamic error) {
     dynamic errorDescription = "";
     if (error is Exception) {
       try {

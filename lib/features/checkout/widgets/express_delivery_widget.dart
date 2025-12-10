@@ -12,9 +12,9 @@ class ExpressDeliveryWidget extends StatelessWidget {
   final bool selfPickup;
   
   const ExpressDeliveryWidget({
-    Key? key,
+    super.key,
     required this.selfPickup,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +69,8 @@ class ExpressDeliveryWidget extends StatelessWidget {
                     onChanged: (value) {
                       orderProvider.toggleExpressDelivery(value);
                     },
-                    activeColor: Theme.of(context).primaryColor,
+                    activeThumbColor: Theme.of(context).primaryColor,
+                    activeTrackColor: Theme.of(context).primaryColor.withValues(alpha: 0.3),
                   ),
                 ],
               ),
@@ -79,7 +80,7 @@ class ExpressDeliveryWidget extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor.withOpacity(0.1),
+                    color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(Dimensions.radiusSizeDefault),
                   ),
                   child: Row(

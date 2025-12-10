@@ -8,6 +8,7 @@ import 'package:flutter_grocery/features/home/providers/flash_deal_provider.dart
 import 'package:flutter_grocery/common/providers/product_provider.dart';
 import 'package:flutter_grocery/utill/dimensions.dart';
 import 'package:flutter_grocery/common/widgets/product_widget.dart';
+import 'package:flutter_grocery/features/home/widgets/zepto_style_product_card.dart';
 import 'package:flutter_grocery/common/widgets/web_product_shimmer_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -15,8 +16,9 @@ class HomeItemWidget extends StatefulWidget {
   final List<Product>? productList;
   final bool isFlashDeal;
   final bool isFeaturedItem;
+  final bool useZeptoStyle;
 
-  const HomeItemWidget({super.key, this.productList, this.isFlashDeal = false, this.isFeaturedItem = false});
+  const HomeItemWidget({super.key, this.productList, this.isFlashDeal = false, this.isFeaturedItem = false, this.useZeptoStyle = false});
 
   @override
   State<HomeItemWidget> createState() => _HomeItemWidgetState();
@@ -27,17 +29,23 @@ class _HomeItemWidgetState extends State<HomeItemWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double targetCount = ResponsiveHelper.isDesktop(context) ? 8 : 3.5;
+    final double computedWidth = (screenWidth / targetCount) - 12;
+    final double cardWidth = computedWidth.clamp(150, 200);
+    final double cardHeight = widget.isFeaturedItem ? 340 : 360;
+
     return Consumer<FlashDealProvider>(builder: (context, flashDealProvider, child) {
         return Consumer<ProductProvider>(builder: (context, productProvider, child) {
 
 
           return widget.productList != null ? Column(children: [
               widget.isFlashDeal ? SizedBox(
-              height: 340,
+              height: cardHeight + 30,
               child: CarouselSlider.builder(
                 itemCount: widget.productList!.length,
                 options: CarouselOptions(
-                  height: 340,
+                  height: cardHeight + 30,
                   autoPlay: true,
                   autoPlayInterval: const Duration(seconds: 5),
                   autoPlayAnimationDuration: const Duration(milliseconds: 1000),
@@ -50,17 +58,19 @@ class _HomeItemWidgetState extends State<HomeItemWidget> {
                   },
                 ),
                 itemBuilder: (context, index, realIndex) {
-                  return ProductWidget(
-                    isGrid: true,
-                    product: widget.productList![index],
-                    productType: ProductType.flashSale,
-                  );
+                    return widget.useZeptoStyle
+                        ? ZeptoStyleProductCard(product: widget.productList![index])
+                        : ProductWidget(
+                          isGrid: true,
+                          product: widget.productList![index],
+                          productType: ProductType.flashSale,
+                        );
                 },
               )) : SizedBox(
-                height: widget.isFeaturedItem ? 150 : 340,
+                height: cardHeight + 30,
                 child: CustomSliderListWidget(
                   controller: scrollController,
-                  verticalPosition: widget.isFeaturedItem ? 50 :  120,
+                  verticalPosition: widget.isFeaturedItem ? 60 :  120,
                   isShowForwardButton: (widget.productList?.length ?? 0) > 3,
                   child: ListView.builder(
                     controller: scrollController,
@@ -69,14 +79,15 @@ class _HomeItemWidgetState extends State<HomeItemWidget> {
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (context, index) {
                       return Container(
-                        width: widget.isFeaturedItem ? ResponsiveHelper.isDesktop(context) ?  370 : MediaQuery.of(context).size.width * 0.90 : 260,
-                        // width: ResponsiveHelper.isDesktop(context) ? widget.isFeaturedItem ? 370 : 260 : widget.isFeaturedItem ? MediaQuery.of(context).size.width * 0.90 : MediaQuery.of(context).size.width * 0.65,
-                        padding: const EdgeInsets.all(5),
-                        child: ProductWidget(
-                          isGrid: widget.isFeaturedItem ? false : true,
-                          product: widget.productList![index],
-                          productType: ProductType.dailyItem,
-                        ),
+                        width: cardWidth,
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                        child: widget.useZeptoStyle
+                            ? ZeptoStyleProductCard(product: widget.productList![index])
+                            : ProductWidget(
+                              isGrid: widget.isFeaturedItem ? false : true,
+                              product: widget.productList![index],
+                              productType: ProductType.dailyItem,
+                            ),
                       );
                       },
                   ),

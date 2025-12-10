@@ -14,6 +14,7 @@ import 'package:flutter_grocery/features/home/providers/flash_deal_provider.dart
 import 'package:flutter_grocery/features/home/widgets/all_product_list_widget.dart';
 import 'package:flutter_grocery/features/home/widgets/banners_widget.dart';
 import 'package:flutter_grocery/features/home/widgets/category_web_widget.dart';
+import 'package:flutter_grocery/features/home/widgets/category_page_widget.dart';
 import 'package:flutter_grocery/features/home/widgets/flash_deal_home_card_widget.dart';
 import 'package:flutter_grocery/features/home/widgets/home_item_widget.dart';
 import 'package:flutter_grocery/features/order/providers/order_provider.dart';
@@ -113,11 +114,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 return (banner.bannerList?.isEmpty ?? false) ? const SizedBox() : const BannersWidget();
               }),
 
+              const SizedBox(height: Dimensions.paddingSizeSmall),
+
+              // Zepto-style category pills for quick navigation
+              const CategoryPillsWidget(),
+
+              const SizedBox(height: Dimensions.paddingSizeLarge),
 
               /// Category
               Padding(
                 padding: EdgeInsets.only(
-                  bottom: ResponsiveHelper.isDesktop(context) ? Dimensions.paddingSizeLarge : Dimensions.paddingSizeSmall,
+                  bottom: ResponsiveHelper.isDesktop(context) ? Dimensions.paddingSizeLarge : Dimensions.paddingSizeDefault,
                 ),
                 child: const CategoryWidget(),
               ),
@@ -145,7 +152,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       RouteHelper.getHomeItemRoute(ProductType.dailyItem);
                     }),
 
-                    HomeItemWidget(productList: productProvider.dailyProductModel?.products),
+                    const SizedBox(height: Dimensions.paddingSizeExtraSmall),
+
+                    HomeItemWidget(productList: productProvider.dailyProductModel?.products, useZeptoStyle: true),
+
+                    const SizedBox(height: Dimensions.paddingSizeLarge),
 
                   ]) : const SizedBox(),
 
@@ -158,7 +169,11 @@ class _HomeScreenState extends State<HomeScreen> {
                              RouteHelper.getHomeItemRoute(ProductType.featuredItem);
                           }),
 
-                          HomeItemWidget(productList: productProvider.featuredProductModel?.products, isFeaturedItem: true),
+                          const SizedBox(height: Dimensions.paddingSizeExtraSmall),
+
+                          HomeItemWidget(productList: productProvider.featuredProductModel?.products, isFeaturedItem: true, useZeptoStyle: true),
+
+                          const SizedBox(height: Dimensions.paddingSizeLarge),
                         ])
                             : const SizedBox();
                       }
@@ -173,7 +188,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             RouteHelper.getHomeItemRoute(ProductType.mostReviewed);
                           }),
 
-                          HomeItemWidget(productList: productProvider.mostViewedProductModel?.products),
+                          const SizedBox(height: Dimensions.paddingSizeExtraSmall),
+
+                          HomeItemWidget(productList: productProvider.mostViewedProductModel?.products, useZeptoStyle: true),
+
+                          const SizedBox(height: Dimensions.paddingSizeLarge),
 
                         ])
                             : const SizedBox();

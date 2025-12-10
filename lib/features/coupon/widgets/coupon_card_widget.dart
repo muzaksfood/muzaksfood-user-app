@@ -112,11 +112,9 @@ class CouponCardWidget extends StatelessWidget {
 
                         InkWell(
                           onTap: (){
-                            Clipboard.setData(ClipboardData(text: coupon?.code ?? '')).then((value){
-                              Future.delayed(const Duration(milliseconds: 800), () {
-                                showCustomSnackBarHelper(getTranslated('coupon_code_copied', context), isError:  false);
-                              });
-                            });
+                            final copiedMessage = getTranslated('coupon_code_copied', context);
+                            Clipboard.setData(ClipboardData(text: coupon?.code ?? ''));
+                            showCustomSnackBarHelper(copiedMessage, isError:  false);
                           },
                           child: const CustomAssetImageWidget(Images.copyIcon, height: Dimensions.paddingSizeDefault, width: Dimensions.paddingSizeDefault),
                         ),

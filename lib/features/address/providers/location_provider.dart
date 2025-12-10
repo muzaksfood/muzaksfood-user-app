@@ -222,7 +222,7 @@ class LocationProvider with ChangeNotifier {
     ResponseModel responseModel;
 
     if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
-      Map map = apiResponse.response!.data;
+      Map<String, dynamic> map = apiResponse.response!.data;
       initAddressList();
       String? message = map["message"];
       responseModel = ResponseModel(true, message);
@@ -284,7 +284,7 @@ class LocationProvider with ChangeNotifier {
     }
   }
 
-  initializeAllAddressType({BuildContext? context}) {
+  Future<void> initializeAllAddressType({BuildContext? context}) async {
     if (_getAllAddressType.isEmpty) {
       _getAllAddressType = [];
       _getAllAddressType = locationRepo.getAllAddressType(context: context);
