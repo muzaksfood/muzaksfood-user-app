@@ -4,12 +4,14 @@ import 'package:flutter_grocery/common/models/product_model.dart';
 import 'package:flutter_grocery/common/providers/cart_provider.dart';
 import 'package:flutter_grocery/common/widgets/custom_directionality_widget.dart';
 import 'package:flutter_grocery/common/widgets/custom_image_widget.dart';
+import 'package:flutter_grocery/common/widgets/wish_button_widget.dart';
 import 'package:flutter_grocery/features/splash/providers/splash_provider.dart';
 import 'package:flutter_grocery/helper/custom_snackbar_helper.dart';
 import 'package:flutter_grocery/helper/price_converter_helper.dart';
 import 'package:flutter_grocery/helper/route_helper.dart';
 import 'package:flutter_grocery/localization/language_constraints.dart';
 import 'package:flutter_grocery/utill/color_resources.dart';
+import 'package:flutter_grocery/utill/dimensions.dart';
 import 'package:flutter_grocery/utill/styles.dart';
 import 'package:provider/provider.dart';
 
@@ -85,7 +87,7 @@ class ZeptoStyleProductCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Image + discount badge
+                // Image + discount badge + vertical wishlist/cart icons
                 Stack(
                   children: [
                     ClipRRect(
@@ -100,37 +102,45 @@ class ZeptoStyleProductCard extends StatelessWidget {
                     ),
                     if ((product.price ?? 0) > (discountValue.discount ?? product.price ?? 0))
                       Positioned(
-                        top: 6,
-                        left: 6,
+                        top: 0,
+                        left: 0,
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                          padding: const EdgeInsets.all(4),
+                          height: 30,
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                Theme.of(context).colorScheme.error,
-                                Theme.of(context).colorScheme.error.withValues(alpha: 0.85),
-                              ],
+                            color: Theme.of(context).colorScheme.error,
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(10),
+                              bottomRight: Radius.circular(10),
                             ),
-                            borderRadius: BorderRadius.circular(6),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Theme.of(context).colorScheme.error.withValues(alpha: 0.3),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Center(
+                                child: Text(
+                                  product.discountType == 'percent'
+                                      ? '-${product.discount?.toStringAsFixed(0) ?? ''}%'
+                                      : '-${PriceConverterHelper.convertPrice(context, product.discount)}',
+                                  style: poppinsRegular.copyWith(fontSize: 10, color: Theme.of(context).cardColor),
+                                ),
                               ),
                             ],
                           ),
-                          child: Text(
-                            product.discountType == 'percent'
-                                ? '-${product.discount?.toStringAsFixed(0) ?? ''}%'
-                                : '-${PriceConverterHelper.convertPrice(context, product.discount)}',
-                            style: poppinsSemiBold.copyWith(
-                              fontSize: 10,
-                              color: Colors.white,
-                            ),
-                          ),
                         ),
                       ),
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          WishButtonWidget(product: product, edgeInset: const EdgeInsets.all(5)),
+                          const SizedBox(height: 4),
+                          _CartQuickIcon(product: product, isInCart: isInCart, stock: stock, cartModel: cartModel, hasVariations: hasVariations),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
 
@@ -373,6 +383,61 @@ class _QuantityStepper extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, size: 18, color: Theme.of(context).primaryColor),
+        ),
+      ),
+    );
+  }
+}
+
+class _CartQuickIcon extends StatelessWidget {
+  final Product product;
+  final bool isInCart;
+  final int? stock;
+  final CartModel? cartModel;
+  final bool hasVariations;
+
+  const _CartQuickIcon({
+    required this.product,
+    required this.isInCart,
+    required this.stock,
+    required this.cartModel,
+    required this.hasVariations,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: getTranslated('click_to_add_to_your_cart', context),
+      child: InkWell(
+        onTap: () {
+          if (hasVariations) {
+            RouteHelper.getProductDetailsRoute(productId: product.id);
+            return;
+          }
+          if (isInCart) {
+            showCustomSnackBarHelper(getTranslated('already_added', context));
+          } else if ((stock ?? 0) < 1) {
+            showCustomSnackBarHelper(
+              '${getTranslated('there_is_nt_enough_quantity_on_stock', context)} ${getTranslated('only', context)} $stock ${getTranslated('is_available', context)}',
+              snackBarStatus: SnackBarStatus.info,
+            );
+          } else {
+            Provider.of<CartProvider>(context, listen: false).addToCart(cartModel!);
+            showCustomSnackBarHelper(getTranslated('added_to_cart', context), isError: false);
+          }
+        },
+        child: Container(
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardColor,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: Theme.of(context).primaryColor.withValues(alpha: 0.08)),
+          ),
+          child: Icon(
+            Icons.shopping_cart_outlined,
+            color: Theme.of(context).primaryColor,
+            size: Dimensions.paddingSizeLarge,
+          ),
         ),
       ),
     );

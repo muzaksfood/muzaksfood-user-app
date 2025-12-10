@@ -4,6 +4,7 @@ import 'package:flutter_grocery/common/widgets/on_hover_widget.dart';
 import 'package:flutter_grocery/common/widgets/text_hover_widget.dart';
 import 'package:flutter_grocery/features/category/providers/category_provider.dart';
 import 'package:flutter_grocery/features/splash/providers/splash_provider.dart';
+import 'package:flutter_grocery/helper/responsive_helper.dart';
 import 'package:flutter_grocery/helper/route_helper.dart';
 import 'package:flutter_grocery/utill/dimensions.dart';
 import 'package:flutter_grocery/utill/styles.dart';
@@ -20,6 +21,60 @@ class CategoryPillsWidget extends StatelessWidget {
       final categories = categoryProvider.categoryList ?? [];
       if (categories.isEmpty) return const SizedBox();
 
+      // Use grid on mobile for better space utilization (4 columns)
+      if (!ResponsiveHelper.isDesktop(context)) {
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          padding: padding,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 4,
+            mainAxisSpacing: 12,
+            crossAxisSpacing: 12,
+            childAspectRatio: 0.8,
+          ),
+          itemCount: categories.length,
+          itemBuilder: (context, index) {
+            final category = categories[index];
+            final baseUrls = Provider.of<SplashProvider>(context, listen: false).baseUrls;
+            return InkWell(
+              onTap: () => RouteHelper.getCategoryProductsRoute(categoryId: '${category.id}'),
+              borderRadius: BorderRadius.circular(12),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Theme.of(context).primaryColor.withValues(alpha: 0.15)),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: CustomImageWidget(
+                          image: baseUrls?.categoryImageUrl != null ? '${baseUrls?.categoryImageUrl}/${category.image}' : (category.image ?? ''),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    category.name ?? '',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                    style: poppinsMedium.copyWith(fontSize: 11, height: 1.2),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      }
+
+      // Horizontal pills for desktop
       return SizedBox(
         height: 48,
         child: ListView.builder(

@@ -33,7 +33,7 @@ class _HomeItemWidgetState extends State<HomeItemWidget> {
     final double targetCount = ResponsiveHelper.isDesktop(context) ? 8 : 3.5;
     final double computedWidth = (screenWidth / targetCount) - 12;
     final double cardWidth = computedWidth.clamp(150, 200);
-    final double cardHeight = widget.isFeaturedItem ? 340 : 360;
+    final double cardHeight = widget.isFeaturedItem ? 290 : 300;
 
     return Consumer<FlashDealProvider>(builder: (context, flashDealProvider, child) {
         return Consumer<ProductProvider>(builder: (context, productProvider, child) {

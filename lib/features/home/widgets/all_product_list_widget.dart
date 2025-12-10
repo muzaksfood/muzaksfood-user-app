@@ -111,7 +111,7 @@ class _AllProductListWidgetState extends State<AllProductListWidget> {
                   crossAxisSpacing: isDesktop ? 12 : 8,
                   mainAxisSpacing: isDesktop ? 12 : 8,
                   childAspectRatio: isDesktop
-                      ? 0.78
+                      ? 0.58
                       : ResponsiveHelper.isTab(context)
                           ? (screenWeight > 860 ? 0.85 : 0.65)
                           : 0.7,

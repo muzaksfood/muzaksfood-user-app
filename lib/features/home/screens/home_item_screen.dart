@@ -154,7 +154,7 @@ class _HomeItemScreenState extends State<HomeItemScreen> {
                             crossAxisSpacing: ResponsiveHelper.isDesktop(context) ? 12 : 8,
                             mainAxisSpacing: ResponsiveHelper.isDesktop(context) ? 12 : 8,
                             childAspectRatio: ResponsiveHelper.isDesktop(context)
-                                ? 0.78
+                                ? 0.58
                                 : 0.72,
                             crossAxisCount: ResponsiveHelper.isDesktop(context)
                                 ? (imageWidth / 170).floor().clamp(6, 8)

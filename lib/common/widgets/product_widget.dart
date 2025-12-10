@@ -385,7 +385,7 @@ class _ProductGridWidget extends StatelessWidget {
         formSearch: productType == ProductType.searchItem,
       ),
       child: Container(
-        constraints: const BoxConstraints(minWidth: 150, maxWidth: 200, minHeight: 250),
+        constraints: const BoxConstraints(minWidth: 150, maxWidth: 200),
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
@@ -405,7 +405,7 @@ class _ProductGridWidget extends StatelessWidget {
             Stack(
               children: [
                 AspectRatio(
-                  aspectRatio: 1,
+                  aspectRatio: 1.05,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(Dimensions.radiusSizeTen),
                     child: CustomImageWidget(
@@ -418,26 +418,27 @@ class _ProductGridWidget extends StatelessWidget {
 
                 if (product.price != priceWithDiscount)
                   Positioned(
-                    top: 8,
-                    left: 8,
+                    top: 0,
+                    left: 0,
                     child: _DiscountTag(product: product, discountType: discountType!),
                   ),
 
                 Positioned(
-                  top: 8,
-                  right: 8,
-                  child: WishButtonWidget(product: product, edgeInset: const EdgeInsets.all(5.0)),
-                ),
-
-                Positioned(
-                  top: 10,
-                  right: 46,
-                  child: _FloatingCartIcon(
-                    product: product,
-                    productType: productType,
-                    isExistInCart: isExistInCart,
-                    stock: stock,
-                    cartModel: cartModel,
+                  top: 0,
+                  right: 0,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      WishButtonWidget(product: product, edgeInset: const EdgeInsets.all(5.0)),
+                      const SizedBox(height: 4),
+                      _FloatingCartIcon(
+                        product: product,
+                        productType: productType,
+                        isExistInCart: isExistInCart,
+                        stock: stock,
+                        cartModel: cartModel,
+                      ),
+                    ],
                   ),
                 ),
               ],
