@@ -112,10 +112,10 @@ class _AllProductListWidgetState extends State<AllProductListWidget> {
                   crossAxisSpacing: isDesktop ? 16 : 10,
                   mainAxisSpacing: isDesktop ? 24 : 16,
                   childAspectRatio: isDesktop
-                      ? 0.75
+                      ? 0.50
                       : isTablet
-                          ? (screenWidth > 860 ? 0.75 : 0.7)
-                          : 0.68,
+                          ? (screenWidth > 860 ? 0.65 : 0.60)
+                          : 0.60,
                   crossAxisCount: isDesktop ? desktopCrossAxisCount : isTablet ? 3 : 3,
                 ),
                 itemCount: productProvider.allProductModel?.products != null ? productProvider.allProductModel?.products?.length : 10,
