@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_grocery/common/widgets/custom_image_widget.dart';
 import 'package:flutter_grocery/features/category/providers/category_provider.dart';
 import 'package:flutter_grocery/features/splash/providers/splash_provider.dart';
+import 'package:flutter_grocery/helper/responsive_helper.dart';
 import 'package:flutter_grocery/helper/route_helper.dart';
 import 'package:flutter_grocery/utill/dimensions.dart';
 import 'package:flutter_grocery/utill/styles.dart';
 import 'package:provider/provider.dart';
 
-/// Horizontal category carousel (Zepto-style) - single line with 4 items visible at a time.
+/// Horizontal category carousel (Zepto-style) - responsive design.
+/// Mobile: 4 items visible, Desktop: 10+ items visible
 class CategoryPillsWidget extends StatelessWidget {
   final EdgeInsetsGeometry padding;
   const CategoryPillsWidget({super.key, this.padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 8)});
@@ -18,9 +20,10 @@ class CategoryPillsWidget extends StatelessWidget {
       final categories = categoryProvider.categoryList ?? [];
       if (categories.isEmpty) return const SizedBox();
 
-      // Horizontal carousel for both mobile and desktop - show 4 items at a time
       final screenWidth = MediaQuery.of(context).size.width;
-      final itemWidth = (screenWidth / 4) - 12;
+      final isDesktop = ResponsiveHelper.isDesktop(context);
+      final itemsPerView = isDesktop ? 10 : 4;
+      final itemWidth = (screenWidth / itemsPerView) - 12;
 
       return SizedBox(
         height: 120,

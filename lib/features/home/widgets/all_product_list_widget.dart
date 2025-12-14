@@ -32,9 +32,10 @@ class _AllProductListWidgetState extends State<AllProductListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWeight = MediaQuery.sizeOf(context).width;
+    final double screenWidth = MediaQuery.sizeOf(context).width;
     final bool isDesktop = ResponsiveHelper.isDesktop(context);
-    final int desktopCrossAxisCount = isDesktop ? (screenWeight / 170).floor().clamp(6, 8) : 3;
+    final bool isTablet = ResponsiveHelper.isTab(context);
+    final int desktopCrossAxisCount = isDesktop ? (screenWidth / 180).floor().clamp(4, 8) : (isTablet ? 3 : 3);
 
     return Consumer<ProductProvider>(
       builder: (context, productProvider, _) {
@@ -109,13 +110,13 @@ class _AllProductListWidgetState extends State<AllProductListWidget> {
               ) : GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisSpacing: isDesktop ? 16 : 10,
-                  mainAxisSpacing: isDesktop ? 20 : 16,
+                  mainAxisSpacing: isDesktop ? 24 : 16,
                   childAspectRatio: isDesktop
-                      ? 0.56
-                      : ResponsiveHelper.isTab(context)
-                          ? (screenWeight > 860 ? 0.85 : 0.65)
+                      ? 0.75
+                      : isTablet
+                          ? (screenWidth > 860 ? 0.75 : 0.7)
                           : 0.68,
-                  crossAxisCount: isDesktop ? desktopCrossAxisCount : ResponsiveHelper.isTab(context) ? 3 : 3,
+                  crossAxisCount: isDesktop ? desktopCrossAxisCount : isTablet ? 3 : 3,
                 ),
                 itemCount: productProvider.allProductModel?.products != null ? productProvider.allProductModel?.products?.length : 10,
                 padding: EdgeInsets.symmetric(
