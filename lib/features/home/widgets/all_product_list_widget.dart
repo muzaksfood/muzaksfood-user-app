@@ -144,6 +144,7 @@ class _AllProductListWidgetState extends State<AllProductListWidget> {
               ),
                 ],
               ),
+            ],
           ),
 
           PaginatedListWidget(
