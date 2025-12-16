@@ -115,7 +115,7 @@ class _AllProductListWidgetState extends State<AllProductListWidget> {
                       ? 0.50
                       : isTablet
                           ? (screenWidth > 860 ? 0.65 : 0.60)
-                          : 0.60,
+                          : 0.45,
                   crossAxisCount: isDesktop ? desktopCrossAxisCount : isTablet ? 3 : 3,
                 ),
                 itemCount: productProvider.allProductModel?.products != null ? productProvider.allProductModel?.products?.length : 10,
