@@ -27,9 +27,14 @@ class CustomImageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final placeholderImage = placeholder.isNotEmpty ? placeholder : Images.placeHolder;
     return CachedNetworkImage(
-      imageUrl: kIsWeb ? '${AppConstants.baseUrl}/image-proxy?url=$image' : image, height: height, width: width, fit: fit,
+      imageUrl: kIsWeb ? '${AppConstants.baseUrl}/image-proxy?url=$image' : image, 
+      height: height, 
+      width: width, 
+      fit: fit,
+      fadeInDuration: const Duration(milliseconds: 200),
       placeholder: (context, url) => CustomAssetImageWidget(placeholderImage, height: height, width: width, fit: fit,),
       errorWidget: (context, url, error) => CustomAssetImageWidget(placeholderImage, height: height, width: width, fit: fit,),
+      cacheManager: null,
     );
   }
 }

@@ -29,6 +29,7 @@ class CategoryProductScreen extends StatefulWidget {
 }
 
 class _CategoryProductScreenState extends State<CategoryProductScreen> {
+  final ScrollController _scrollController = ScrollController();
 
   void _loadData(BuildContext context) async {
     final CategoryProvider categoryProvider = Provider.of<CategoryProvider>(context, listen: false);
@@ -39,7 +40,7 @@ class _CategoryProductScreenState extends State<CategoryProductScreen> {
 
       categoryProvider.getSubCategoryList(context, widget.categoryId);
 
-      categoryProvider.initCategoryProductList(widget.categoryId);
+      categoryProvider.initAllSubCategoryProductsList(widget.categoryId);
     }
   }
 
@@ -89,7 +90,7 @@ class _CategoryProductScreenState extends State<CategoryProductScreen> {
                                       child: InkWell(
                                         onTap: (){
                                           categoryProvider.onChangeSelectIndex(-1);
-                                          productProvider.initCategoryProductList(widget.categoryId);
+                                          productProvider.initAllSubCategoryProductsList(widget.categoryId);
                                         },
                                         hoverColor: Colors.transparent,
                                         child: Container(
@@ -167,25 +168,48 @@ class _CategoryProductScreenState extends State<CategoryProductScreen> {
                       }),),
       
                   Expanded(child: CustomScrollView(slivers: [
-                    SliverToBoxAdapter(child: productProvider.subCategoryProductList.isNotEmpty ? Center(
+                    SliverToBoxAdapter(child: productProvider.subCategoryProductsGrouped.isNotEmpty ? Center(
                       child: SizedBox(
                         width: Dimensions.webScreenWidth,
-                        child: GridView.builder(
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisSpacing: ResponsiveHelper.isDesktop(context) ? 13 : 10,
-                            mainAxisSpacing: ResponsiveHelper.isDesktop(context) ? 13 : 10,
-                            childAspectRatio: ResponsiveHelper.isDesktop(context) ? (1/1.4) : (1/1.8),
-                            crossAxisCount: ResponsiveHelper.isDesktop(context) ? 5 : 2,
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeSmall,vertical: Dimensions.paddingSizeSmall),
+                        child: ListView.builder(
                           physics: const NeverScrollableScrollPhysics(),
-                          itemCount: productProvider.subCategoryProductList.length,
                           shrinkWrap: true,
-      
-                          itemBuilder: (BuildContext context, int index) {
-                            return ProductWidget(product: productProvider.subCategoryProductList[index], isCenter: true, isGrid: true);
+                          itemCount: productProvider.subCategoryProductsGrouped.length,
+                          itemBuilder: (context, index) {
+                            final subCategoryName = productProvider.subCategoryProductsGrouped.keys.elementAt(index);
+                            final products = productProvider.subCategoryProductsGrouped[subCategoryName] ?? [];
+                            
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(Dimensions.paddingSizeSmall, 16, Dimensions.paddingSizeSmall, 12),
+                                  child: Text(
+                                    subCategoryName,
+                                    style: poppinsBold.copyWith(
+                                      fontSize: 16,
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                                    ),
+                                  ),
+                                ),
+                                GridView.builder(
+                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisSpacing: ResponsiveHelper.isDesktop(context) ? 13 : 10,
+                                    mainAxisSpacing: ResponsiveHelper.isDesktop(context) ? 13 : 10,
+                                    childAspectRatio: ResponsiveHelper.isDesktop(context) ? (1/1.4) : (1/1.8),
+                                    crossAxisCount: ResponsiveHelper.isDesktop(context) ? 5 : 2,
+                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeSmall, vertical: 0),
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: products.length,
+                                  shrinkWrap: true,
+                                  itemBuilder: (BuildContext context, int productIndex) {
+                                    return ProductWidget(product: products[productIndex], isCenter: true, isGrid: true);
+                                  },
+                                ),
+                              ],
+                            );
                           },
-      
                         ),
                       ),
                     ) : Center(child: SizedBox(

@@ -120,10 +120,12 @@ class CategoryProvider extends ChangeNotifier  {
 
 
   List<Product> _subCategoryProductList = [];
+  Map<String, List<Product>> _subCategoryProductsGrouped = {};
   bool? _hasData;
   double _maxValue = 0;
   double get maxValue => _maxValue;
   List<Product> get subCategoryProductList => _subCategoryProductList;
+  Map<String, List<Product>> get subCategoryProductsGrouped => _subCategoryProductsGrouped;
   List<String?> _allSortBy = [];
   List<String?> get allSortBy => _allSortBy;
   bool? get hasData => _hasData;
@@ -150,6 +152,29 @@ class CategoryProvider extends ChangeNotifier  {
     } else {
       ApiCheckerHelper.checkApi(apiResponse);
     }
+    notifyListeners();
+  }
+
+  void initAllSubCategoryProductsList(String categoryID) async {
+    _subCategoryProductsGrouped = {};
+    _hasData = true;
+    
+    if (_subCategoryList == null || _subCategoryList!.isEmpty) {
+      return;
+    }
+
+    for (var subCategory in _subCategoryList!) {
+      ApiResponseModel apiResponse = await productRepo.getBrandOrCategoryProductList('${subCategory.id}');
+      if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+        List<Product> products = [];
+        apiResponse.response!.data.forEach((product) => products.add(Product.fromJson(product)));
+        if (products.isNotEmpty) {
+          _subCategoryProductsGrouped[subCategory.name ?? ''] = products;
+        }
+      }
+    }
+    
+    _hasData = _subCategoryProductsGrouped.isNotEmpty;
     notifyListeners();
   }
 
