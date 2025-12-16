@@ -17,6 +17,7 @@ import 'package:flutter_grocery/features/category/providers/category_provider.da
 import 'package:flutter_grocery/features/menu/widgets/currency_dialog_widget.dart';
 import 'package:flutter_grocery/features/profile/providers/profile_provider.dart';
 import 'package:flutter_grocery/features/search/providers/search_provider.dart';
+import 'package:flutter_grocery/features/search/widgets/instant_search_dropdown_widget.dart';
 import 'package:flutter_grocery/features/splash/providers/splash_provider.dart';
 import 'package:flutter_grocery/features/wishlist/providers/wishlist_provider.dart';
 import 'package:flutter_grocery/helper/dialog_helper.dart';
@@ -199,53 +200,74 @@ class _WebAppBarWidgetState extends State<WebAppBarWidget> {
 
 
                         Row(children: [
-                          Container(
-                            width: 500,
-                            decoration: BoxDecoration(
-                              color:  Theme.of(context).disabledColor.withValues(alpha: 0.05),
-                              borderRadius: BorderRadius.circular(Dimensions.radiusSizeDefault),
-                            ),
-                            padding: const EdgeInsets.symmetric(horizontal: 0,vertical: 2),
-                            child: Consumer<SearchProvider>(
-                                builder: (context,search,_) {
-                                  return CustomTextFieldWidget(
-                                    hintText: getTranslated('search_for_products', context),
-                                    isShowBorder: false,
-                                    fillColor: Colors.transparent,
-                                    isElevation: false,
-                                    isShowSuffixIcon: true,
-                                    imageColor: Theme.of(context).primaryColor,
-                                    suffixAssetUrl: !search.isSearch ? Images.close : Images.search,
-                                    onChanged: (str){
-                                      str.length = 0;
-                                      search.setSearchValue(str);
+                          Consumer<SearchProvider>(
+                            builder: (context, search, _) {
+                              return Stack(
+                                children: [
+                                  Container(
+                                    width: 500,
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).disabledColor.withValues(alpha: 0.05),
+                                      borderRadius: BorderRadius.circular(Dimensions.radiusSizeDefault),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 2),
+                                    child: CustomTextFieldWidget(
+                                      hintText: getTranslated('search_for_products', context),
+                                      isShowBorder: false,
+                                      fillColor: Colors.transparent,
+                                      isElevation: false,
+                                      isShowSuffixIcon: true,
+                                      imageColor: Theme.of(context).primaryColor,
+                                      suffixAssetUrl: !search.isSearch ? Images.close : Images.search,
+                                      onChanged: (str) {
+                                        search.setSearchValue(str);
+                                        if (str.isNotEmpty) {
+                                          search.getInstantSearchResults(str);
+                                        }
                                       },
-
-                                    onSuffixTap: () {
-                                      if(search.searchController.text.isNotEmpty && search.isSearch == true){
-                                         RouteHelper.getSearchResultRoute(search.searchController.text);
-                                        search.onChangeSearchStatus();
-                                      }
-                                      else if (search.searchController.text.isNotEmpty && search.isSearch == false) {
-                                        search.searchController.clear();
-                                        search.setSearchValue('');
-                                        search.onChangeSearchStatus();
-                                      }
-                                    },
-                                    controller: search.searchController,
-                                    inputAction: TextInputAction.search,
-                                    isIcon: true,
-                                    onSubmit: (text) {
-                                      if (search.searchController.text.isNotEmpty) {
-
-                                        RouteHelper.getSearchResultRoute(search.searchController.text);
-
-                                        search.onChangeSearchStatus();
-                                      }
-
-                                    },);
-                                }
-                            ),
+                                      onSuffixTap: () {
+                                        if (search.searchController.text.isNotEmpty && search.isSearch == true) {
+                                          search.saveSearchAddress(search.searchController.text);
+                                          RouteHelper.getSearchResultRoute(search.searchController.text);
+                                          search.onChangeSearchStatus();
+                                        } else if (search.searchController.text.isNotEmpty && search.isSearch == false) {
+                                          search.searchController.clear();
+                                          search.setSearchValue('');
+                                          search.onChangeSearchStatus();
+                                        }
+                                      },
+                                      controller: search.searchController,
+                                      inputAction: TextInputAction.search,
+                                      isIcon: true,
+                                      onSubmit: (text) {
+                                        if (search.searchController.text.isNotEmpty) {
+                                          search.saveSearchAddress(search.searchController.text);
+                                          RouteHelper.getSearchResultRoute(search.searchController.text);
+                                          search.onChangeSearchStatus();
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 40,
+                                    left: 0,
+                                    right: 0,
+                                    child: search.searchController.text.isNotEmpty
+                                        ? InstantSearchDropdownWidget(
+                                            results: search.instantSearchResults,
+                                            isSearching: search.isInstantSearching,
+                                            query: search.searchController.text,
+                                            onViewAll: () {
+                                              search.saveSearchAddress(search.searchController.text);
+                                              RouteHelper.getSearchResultRoute(search.searchController.text);
+                                              search.onChangeSearchStatus();
+                                            },
+                                          )
+                                        : const SizedBox(),
+                                  ),
+                                ],
+                              );
+                            },
                           ),
                           const SizedBox(width: 70),
 

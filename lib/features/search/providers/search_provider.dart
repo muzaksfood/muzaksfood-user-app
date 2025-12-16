@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_grocery/common/models/api_response_model.dart';
 import 'package:flutter_grocery/common/models/product_model.dart';
 import 'package:flutter_grocery/features/search/domain/reposotories/search_repo.dart';
+import 'package:flutter_grocery/features/search/providers/search_history_provider.dart';
 import 'package:flutter_grocery/helper/api_checker_helper.dart';
 
 class SearchProvider with ChangeNotifier {
   final SearchRepo? searchRepo;
+  final SearchHistoryProvider? searchHistoryProvider;
 
-  SearchProvider({required this.searchRepo});
+  SearchProvider({required this.searchRepo, this.searchHistoryProvider});
 
   String? _selectedFilter;
   double? _lowerValue;
@@ -96,7 +98,40 @@ class SearchProvider with ChangeNotifier {
 
   ProductModel? _searchProductModel;
   ProductModel? get searchProductModel => _searchProductModel;
+  
+  List<Product> _instantSearchResults = [];
+  bool _isInstantSearching = false;
+  List<Product> get instantSearchResults => _instantSearchResults;
+  bool get isInstantSearching => _isInstantSearching;
 
+  Future<void> getInstantSearchResults(String query) async {
+    if (query.isEmpty) {
+      _instantSearchResults = [];
+      notifyListeners();
+      return;
+    }
+
+    _isInstantSearching = true;
+    notifyListeners();
+
+    ApiResponseModel apiResponse = await searchRepo!.getSearchProductList(
+      offset: 1,
+      query: query,
+      priceHigh: null,
+      priceLow: null,
+      filterBy: null,
+    );
+
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      ProductModel tempModel = ProductModel.fromJson(apiResponse.response?.data);
+      _instantSearchResults = tempModel.products ?? [];
+    } else {
+      _instantSearchResults = [];
+    }
+
+    _isInstantSearching = false;
+    notifyListeners();
+  }
 
   Future<void> getSearchProduct({
     required int offset,
@@ -152,9 +187,14 @@ class SearchProvider with ChangeNotifier {
     if (!_historyList.contains(searchAddress)) {
       _historyList.add(searchAddress);
       searchRepo!.saveSearchAddress(searchAddress);
-     if(isUpdate){
-       notifyListeners();
-     }
+      
+      if (searchHistoryProvider != null && searchAddress != null) {
+        await searchHistoryProvider!.addSearchToHistory(searchAddress);
+      }
+      
+      if(isUpdate){
+        notifyListeners();
+      }
     }
   }
 

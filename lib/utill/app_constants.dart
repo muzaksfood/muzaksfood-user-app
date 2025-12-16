@@ -85,7 +85,19 @@ class AppConstants {
 
   static const String addFundWallet = '/api/v1/customer/add-fund-wallet';
 
+  static const String getSavedPaymentMethodsUri = '/api/v1/customer/payment-methods';
+  static const String addPaymentMethodUri = '/api/v1/customer/payment-methods/add';
+  static const String updatePaymentMethodUri = '/api/v1/customer/payment-methods/update';
+  static const String deletePaymentMethodUri = '/api/v1/customer/payment-methods/delete/';
+  static const String setDefaultPaymentMethodUri = '/api/v1/customer/payment-methods/set-default';
 
+  static const String trackFilterAnalyticsUri = '/api/v1/customer/analytics/filter-usage';
+  static const String getPopularFiltersUri = '/api/v1/customer/analytics/popular-filters';
+
+  static const String getTrendingSearchesUri = '/api/v1/products/trending-searches';
+  static const String getSearchHistoryUri = '/api/v1/customer/search-history';
+  static const String saveSearchHistoryUri = '/api/v1/customer/search-history/save';
+  static const String clearSearchHistoryUri = '/api/v1/customer/search-history/clear';
 
   //MESSAGING
   static const String getDeliveryManMessageUri = '/api/v1/customer/message/get-order-message';

@@ -15,7 +15,16 @@
   <meta name="google-signin-client_id" content="YOUR_AUTH_CLIENT_ID">
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="description" content="MuzaksFood.">
+  
+  <!-- Performance Optimizations -->
+  <meta http-equiv="x-ua-compatible" content="IE=edge">
+  <meta name="theme-color" content="#01684B">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://maps.googleapis.com">
+  <link rel="dns-prefetch" href="https://www.gstatic.com">
+  <link rel="dns-prefetch" href="https://www.googletagmanager.com">
   <!-- DEMO ONLY -->
 <!--  <meta name="robots" content="nofollow, noindex, max-snippet:1, max-video-preview:1, max-image-preview:standard">-->
 <!--  <link rel="canonical" href="https://grofresh-web.6amtech.com" />-->
@@ -86,9 +95,9 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
 
-<div class="preloader">
+<div class="preloader" id="preloader">
   <div class="preloader-container">
-    <img width="55" class="preloader-img" src="assets/preloader.svg" alt="">
+    <img width="60" height="60" class="preloader-img" src="favicon.png" alt="MuzaksFood" loading="lazy" decoding="async">
     <div class="loader"></div>
   </div>
 </div>
@@ -97,7 +106,7 @@
   <div class="header-top-line"></div>
   <div class="header-container d-flex align-items-center justify-content-between">
     <div class="header-start d-flex gap-4 align-items-center">
-      <img class="logo" src="assets/logo.svg" alt="">
+      <img class="logo" src="assets/logo.svg" alt="MuzaksFood Logo" loading="lazy">
       <div class="placeholder"></div>
       <div class="placeholder"></div>
       <div class="placeholder"></div>
@@ -106,8 +115,8 @@
       <div class="placeholder placeholder-wide"></div>
       <div class="placeholder"></div>
       <div class="placeholder"></div>
-      <img class="svg" src="assets/cart_icon.svg" alt="">
-      <img class="svg" src="assets/menu_icon.svg" alt="">
+      <img class="svg" src="assets/cart_icon.svg" alt="Cart" loading="lazy">
+      <img class="svg" src="assets/menu_icon.svg" alt="Menu" loading="lazy">
     </div>
   </div>
 </header>
@@ -123,6 +132,18 @@
 
 
 <script>
+  // Hide preloader when app is ready
+  function hidePreloader() {
+    const preloader = document.getElementById('preloader');
+    if (preloader) {
+      preloader.classList.add('hidden');
+      setTimeout(() => {
+        preloader.style.display = 'none';
+      }, 300);
+    }
+  }
+
+  // Progressive loading strategy
   window.addEventListener('load', function(ev) {
     {{flutter_js}}
     {{flutter_build_config}}
@@ -135,12 +156,15 @@
         let config = { renderer: 'html' };
         engineInitializer.initializeEngine(config).then(function(appRunner) {
           appRunner.runApp();
-
-
+          // Hide preloader once Flutter app is initialized
+          hidePreloader();
         });
       }
     });
-  });
+  }, { once: true });
+
+  // Fallback: hide preloader after 5 seconds if app hasn't loaded
+  setTimeout(hidePreloader, 5000);
 </script>
 
 

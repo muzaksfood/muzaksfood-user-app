@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_grocery/common/enums/product_filter_type_enum.dart';
 import 'package:flutter_grocery/common/models/config_model.dart';
+import 'package:flutter_grocery/common/widgets/product_filter_bottom_sheet_widget.dart';
 import 'package:flutter_grocery/helper/responsive_helper.dart';
 import 'package:flutter_grocery/localization/language_constraints.dart';
 import 'package:flutter_grocery/common/providers/product_provider.dart';
@@ -29,6 +30,9 @@ class AllProductListWidget extends StatefulWidget {
 
 class _AllProductListWidgetState extends State<AllProductListWidget> {
   ProductFilterType filterType = ProductFilterType.latest;
+  double? _filterMinPrice;
+  double? _filterMaxPrice;
+  double? _filterRating;
 
   @override
   Widget build(BuildContext context) {
@@ -45,10 +49,54 @@ class _AllProductListWidgetState extends State<AllProductListWidget> {
             children: [
               TitleWidget(title: getTranslated('all_items', context)),
 
-              Selector<SplashProvider, ConfigModel?>(
-                selector: (_, splashProvider)=> splashProvider.configModel,
-                builder: (context, config, _) {
-                  return PopupMenuButton<ProductFilterType>(
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeSmall, vertical: Dimensions.paddingSizeSmall),
+                    margin: EdgeInsets.only(right: ResponsiveHelper.isDesktop(context) ? 0 : Dimensions.paddingSizeSmall),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).cardColor,
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(color: Theme.of(context).primaryColor),
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                          ),
+                          builder: (context) => ProductFilterBottomSheetWidget(
+                            minPrice: 0,
+                            maxPrice: 100000,
+                            selectedMinPrice: _filterMinPrice,
+                            selectedMaxPrice: _filterMaxPrice,
+                            selectedRating: _filterRating,
+                            onPriceRangeChanged: (minPrice, maxPrice) {
+                              setState(() {
+                                _filterMinPrice = minPrice;
+                                _filterMaxPrice = maxPrice;
+                              });
+                            },
+                            onRatingChanged: (rating) {
+                              setState(() {
+                                _filterRating = rating;
+                              });
+                            },
+                          ),
+                        );
+                      },
+                      child: Icon(
+                        Icons.tune,
+                        color: Theme.of(context).primaryColor,
+                        size: ResponsiveHelper.isDesktop(context) ? 25 : 20,
+                      ),
+                    ),
+                  ),
+                  Selector<SplashProvider, ConfigModel?>(
+                    selector: (_, splashProvider) => splashProvider.configModel,
+                    builder: (context, config, _) {
+                      return PopupMenuButton<ProductFilterType>(
                     padding: const EdgeInsets.all(0),
                     onSelected: (ProductFilterType result) {
                       filterType = result;
@@ -94,7 +142,8 @@ class _AllProductListWidgetState extends State<AllProductListWidget> {
                   );
                 }
               ),
-            ],
+                ],
+              ),
           ),
 
           PaginatedListWidget(

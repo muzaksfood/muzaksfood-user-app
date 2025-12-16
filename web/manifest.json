@@ -1,13 +1,14 @@
 {
-    "name": "MuzaksFood",
+    "name": "MuzaksFood - 15 Minute Delivery at Wholesale Prices",
     "short_name": "MuzaksFood",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
+    "background_color": "#FFFFFF",
+    "theme_color": "#01684B",
     "description": "Get your food and essentials delivered in 15 minutes at wholesale prices.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
+    "scope": "/",
     "icons": [
         {
             "src": "icons/Icon-192.png",
