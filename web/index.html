@@ -132,10 +132,11 @@
 
 
 <script>
-  // Hide preloader when app is ready
+  let preloaderTimeoutId;
+
   function hidePreloader() {
     const preloader = document.getElementById('preloader');
-    if (preloader) {
+    if (preloader && !preloader.classList.contains('hidden')) {
       preloader.classList.add('hidden');
       setTimeout(() => {
         preloader.style.display = 'none';
@@ -143,7 +144,6 @@
     }
   }
 
-  // Progressive loading strategy
   window.addEventListener('load', function(ev) {
     {{flutter_js}}
     {{flutter_build_config}}
@@ -156,15 +156,12 @@
         let config = { renderer: 'html' };
         engineInitializer.initializeEngine(config).then(function(appRunner) {
           appRunner.runApp();
-          // Hide preloader once Flutter app is initialized
-          hidePreloader();
         });
       }
     });
   }, { once: true });
 
-  // Fallback: hide preloader after 5 seconds if app hasn't loaded
-  setTimeout(hidePreloader, 5000);
+  preloaderTimeoutId = setTimeout(hidePreloader, 60000);
 </script>
 
 

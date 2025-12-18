@@ -31,17 +31,12 @@ class CategoryProductScreen extends StatefulWidget {
 class _CategoryProductScreenState extends State<CategoryProductScreen> {
   final ScrollController _scrollController = ScrollController();
 
-  void _loadData(BuildContext context) async {
+  void _loadData(BuildContext context) {
     final CategoryProvider categoryProvider = Provider.of<CategoryProvider>(context, listen: false);
 
-    if (categoryProvider.selectedCategoryIndex == -1) {
-
-      categoryProvider.getCategory(int.tryParse(widget.categoryId), context);
-
-      categoryProvider.getSubCategoryList(context, widget.categoryId);
-
-      categoryProvider.initAllSubCategoryProductsList(widget.categoryId);
-    }
+    categoryProvider.getCategory(int.tryParse(widget.categoryId), context);
+    categoryProvider.getSubCategoryList(context, widget.categoryId);
+    categoryProvider.initAllSubCategoryProductsList(widget.categoryId);
   }
 
   @override
