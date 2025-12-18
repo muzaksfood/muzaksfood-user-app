@@ -217,9 +217,11 @@ class _CategoryProductScreenState extends State<CategoryProductScreen> {
                     ))),
       
       
+                    if(ResponsiveHelper.isDesktop(context))
                     const FooterWebWidget(footerType: FooterType.sliver),
                   ])),
       
+                  if(!ResponsiveHelper.isDesktop(context))
                   const CategoryCartTitleWidget(),
       
                 ],
