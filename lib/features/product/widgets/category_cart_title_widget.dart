@@ -34,23 +34,22 @@ class CategoryCartTitleWidget extends StatelessWidget {
           double subTotal = itemPrice + tax;
           double total = subTotal - discount - Provider.of<CouponProvider>(context).discount!;
 
-          return (cartProvider.cartList.isNotEmpty && ResponsiveHelper.isMobile()) ? Container(
+          return ResponsiveHelper.isMobile() ? Container(
             width: Dimensions.webScreenWidth,
             padding: const EdgeInsets.symmetric(vertical: 20),
-            child: InkWell(
-              onTap: () {
-                Navigator.pop(context);
-                splashProvider.setPageIndex(2);
-              },
-
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
-                      borderRadius: BorderRadius.circular(12)
-                  ),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                    color: cartProvider.cartList.isNotEmpty ? Theme.of(context).primaryColor : Theme.of(context).secondaryHeaderColor,
+                    borderRadius: BorderRadius.circular(12)
+                ),
+                child: cartProvider.cartList.isNotEmpty ? InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                    splashProvider.setPageIndex(2);
+                  },
                   child: Column(
                     children: [
 
@@ -79,6 +78,17 @@ class CategoryCartTitleWidget extends StatelessWidget {
                       ]),
 
                     ],
+                  ),
+                ) : Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12.0),
+                  child: Center(
+                    child: Text(
+                      getTranslated('browse_products', context),
+                      style: poppinsMedium.copyWith(
+                        fontSize: Dimensions.fontSizeDefault,
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
+                      ),
+                    ),
                   ),
                 ),
               ),
