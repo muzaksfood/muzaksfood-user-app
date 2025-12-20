@@ -43,9 +43,13 @@ jobs:
       - name: Flutter pub get
         run: flutter pub get
 
-      # 7. Build Flutter web
+      # 7. Build Flutter web with optimizations
       - name: Build Flutter web
-        run: flutter build web --release
+        run: flutter build web --release --tree-shake-icons
+
+      # 7.1 Copy optimized .htaccess to build folder
+      - name: Copy .htaccess with compression settings
+        run: cp web/.htaccess build/web/.htaccess
 
       # 8. Install utilities
       - name: Install utilities

@@ -152,16 +152,26 @@
       serviceWorker: {
         serviceWorkerVersion: {{flutter_service_worker_version}},
       },
-      onEntrypointLoaded: function(engineInitializer) {
-        let config = { renderer: 'html' };
-        engineInitializer.initializeEngine(config).then(function(appRunner) {
-          appRunner.runApp();
-        });
+      onEntrypointLoaded: async function(engineInitializer) {
+        // Use 'canvaskit' for better performance with complex UIs
+        // Use 'auto' to let Flutter decide based on device capabilities
+        let config = { renderer: 'canvaskit' };
+        
+        try {
+          const appRunner = await engineInitializer.initializeEngine(config);
+          await appRunner.runApp();
+          // Hide preloader once app starts running
+          hidePreloader();
+        } catch (error) {
+          console.error('Flutter initialization error:', error);
+          hidePreloader();
+        }
       }
     });
   }, { once: true });
 
-  preloaderTimeoutId = setTimeout(hidePreloader, 60000);
+  // Fallback: hide preloader after 30 seconds max (reduced from 60s)
+  preloaderTimeoutId = setTimeout(hidePreloader, 30000);
 </script>
 
 

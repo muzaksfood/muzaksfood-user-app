@@ -238,10 +238,8 @@ class _MyAppState extends State<MyApp> {
   void _onRemoveLoader() {
     final preloader = html.document.querySelector('.preloader');
     if (preloader != null) {
-      Future.delayed(const Duration(seconds: 10)).then((_){
-        preloader.remove();
-      });
-
+      // Remove preloader immediately once config is loaded (no delay needed)
+      preloader.remove();
     }
   }
 
@@ -255,8 +253,26 @@ class _MyAppState extends State<MyApp> {
 
     return Consumer<SplashProvider>(
       builder: (context, splashProvider, child) {
+        // Show loading indicator instead of blank SizedBox while config loads
         return (kIsWeb && splashProvider.configModel == null) ?
-        const SizedBox() :
+        const Material(
+          child: Scaffold(
+            backgroundColor: Color(0xFF01684B),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(color: Colors.white),
+                  SizedBox(height: 16),
+                  Text(
+                    'Loading MuzaksFood...',
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ) :
         (!kIsWeb && splashProvider.configModel == null && widget.route != null) ?
         Material(child: SplashLogoWidget()) :
         MaterialApp.router(
